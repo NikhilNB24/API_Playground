@@ -14,13 +14,24 @@ productRoute.get("/products/", async (req, res) => {
     }
 });
 
+// GET(specific) request
+productRoute.get("/products/:id", async (req, res) => {
+    try {
+        const product = await Products.findById(req.params.id);
+        res.status(200).send(product);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
 // POST request
 productRoute.post("/products/", async (req, res) => {
     try {
         let products = new Products({
             name: req.body.name,
-            cp: req.body.cp,
-            sp: req.body.sp,
+            description: req.body.description,
+            price: req.body.price,
+            stock: req.body.stock,
         });
         products = await products.save();
         res.status(201).send(products);
@@ -36,8 +47,9 @@ productRoute.put("/products/:id", async (req, res) => {
             req.params.id,
             {
                 name: req.body.name,
-                cp: req.body.cp,
-                sp: req.body.sp,
+                description: req.body.description,
+                price: req.body.price,
+                stock: req.body.stock,
             },
             { new: true }
         );
