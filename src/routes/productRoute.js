@@ -4,18 +4,47 @@ const { response } = require("express");
 
 const productRoute = new express.Router();
 
-// GET request
-productRoute.get("/products/", async (req, res) => {
+// GET request with "sortBy" option using query parameters
+productRoute.get("/", async (req, res) => {
     try {
-        const products = await Products.find();
-        res.status(200).send(products);
+        const sortBy = req.query.sortBy;
+        const status = req.query.status; // Stock status, i.e, In stock or out of stock
+        console.log(status);
+        let products;
+
+        switch (sortBy || status) {
+            case "name":
+                products = await Products.find().sort({ name: 1 });
+                res.status(200).send(products);
+                break;
+            case "price":
+                products = await Products.find().sort({ price: 1 });
+                res.status(200).send(products);
+                break;
+            case "stock":
+                products = await Products.find().sort({ stock: 1 });
+                res.status(200).send(products);
+                break;
+            case "InStock":
+                products = await Products.find({ stock: { $gt: 0 } });
+                res.status(200).send(products);
+                break;
+            case "OutOfStock":
+                products = await Products.find({ stock: { $eq: 0 } });
+                res.status(200).send(products);
+                break;
+            default:
+                products = await Products.find();
+                res.status(200).send(products);
+                break;
+        }
     } catch (error) {
         res.status(400).send(error);
     }
 });
 
 // GET(specific) request
-productRoute.get("/products/:id", async (req, res) => {
+productRoute.get("/:id", async (req, res) => {
     try {
         const product = await Products.findById(req.params.id);
         res.status(200).send(product);
@@ -25,7 +54,7 @@ productRoute.get("/products/:id", async (req, res) => {
 });
 
 // POST request
-productRoute.post("/products/", async (req, res) => {
+productRoute.post("/", async (req, res) => {
     try {
         let products = new Products({
             name: req.body.name,
@@ -41,7 +70,7 @@ productRoute.post("/products/", async (req, res) => {
 });
 
 // PUT request
-productRoute.put("/products/:id", async (req, res) => {
+productRoute.put("/:id", async (req, res) => {
     try {
         let product = await Products.findByIdAndUpdate(
             req.params.id,
@@ -59,8 +88,22 @@ productRoute.put("/products/:id", async (req, res) => {
     }
 });
 
+// PATCH REQUEST
+productRoute.patch("/:id", async (req, res) => {
+    try {
+        let product = await Products.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+        res.status(200).send(product);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
 // DELETE request
-productRoute.delete("/products/:id", async (req, res) => {
+productRoute.delete("/:id", async (req, res) => {
     try {
         const product = await Products.findByIdAndRemove(req.params.id);
         if (!product) return response.status(400).send("Resource not found...");
