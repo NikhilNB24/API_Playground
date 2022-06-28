@@ -2,27 +2,26 @@ const Products = require("../models/Products.js");
 const express = require("express");
 const { response } = require("express");
 
-const productRoute = new express.Router();
+const router = new express.Router();
 
 // GET request with "sortBy" option using query parameters
-productRoute.get("/", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const sortBy = req.query.sortBy;
         const status = req.query.status; // Stock status, i.e, In stock or out of stock
-        console.log(status);
         let products;
 
         switch (sortBy || status) {
             case "name":
-                products = await Products.find().sort({ name: 1 });
+                products = await Products.find().sort("name");
                 res.status(200).send(products);
                 break;
             case "price":
-                products = await Products.find().sort({ price: 1 });
+                products = await Products.find().sort("price");
                 res.status(200).send(products);
                 break;
             case "stock":
-                products = await Products.find().sort({ stock: 1 });
+                products = await Products.find().sort("stock");
                 res.status(200).send(products);
                 break;
             case "InStock":
@@ -43,8 +42,9 @@ productRoute.get("/", async (req, res) => {
     }
 });
 
+
 // GET(specific) request
-productRoute.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
     try {
         const product = await Products.findById(req.params.id);
         res.status(200).send(product);
@@ -54,7 +54,7 @@ productRoute.get("/:id", async (req, res) => {
 });
 
 // POST request
-productRoute.post("/", async (req, res) => {
+router.post("/", async (req, res) => {
     try {
         let products = new Products({
             name: req.body.name,
@@ -70,7 +70,7 @@ productRoute.post("/", async (req, res) => {
 });
 
 // PUT request
-productRoute.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
     try {
         let product = await Products.findByIdAndUpdate(
             req.params.id,
@@ -89,7 +89,7 @@ productRoute.put("/:id", async (req, res) => {
 });
 
 // PATCH REQUEST
-productRoute.patch("/:id", async (req, res) => {
+router.patch("/:id", async (req, res) => {
     try {
         let product = await Products.findByIdAndUpdate(
             req.params.id,
@@ -103,7 +103,7 @@ productRoute.patch("/:id", async (req, res) => {
 });
 
 // DELETE request
-productRoute.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
     try {
         const product = await Products.findByIdAndRemove(req.params.id);
         if (!product) return response.status(400).send("Resource not found...");
@@ -114,4 +114,4 @@ productRoute.delete("/:id", async (req, res) => {
     }
 });
 
-module.exports = productRoute;
+module.exports = router;
