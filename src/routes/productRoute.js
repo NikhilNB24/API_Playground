@@ -39,7 +39,7 @@ productRoute.get("/", async (req, res) => {
                 break;
         }
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -49,7 +49,7 @@ productRoute.get("/:id", async (req, res) => {
         const product = await Products.findById(req.params.id);
         res.status(200).send(product);
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -65,7 +65,7 @@ productRoute.post("/", async (req, res) => {
         products = await products.save();
         res.status(201).send(products);
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -84,7 +84,7 @@ productRoute.put("/:id", async (req, res) => {
         );
         res.status(200).send(product);
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -98,7 +98,7 @@ productRoute.patch("/:id", async (req, res) => {
         );
         res.status(200).send(product);
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
