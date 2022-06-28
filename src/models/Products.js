@@ -25,11 +25,7 @@ const AppSchema = mongoose.Schema({
     stock: {
         type: Number,
         required: true,
-        validate: {
-            validator: (value) => value > 0,
-            message: (prop) => `${prop.path} should be greater than 0`,
         },
-    },
 });
 
 const Products = mongoose.model("App", AppSchema);
